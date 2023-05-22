@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .hide {
+        display: none;
+    }
+
+    .car {
+        position: absolute;
+        background-color: blue;
+        margin: auto;
+        bottom: 100px;
+        height: 100px;
+        width: 50px;
+    }
+
+    .gameArea {
+        background-color: black;
+        width: 200px;
+        height: 100vh;
+        position: relative;
+        margin: auto;
+        overflow: hidden;
+    }
+    .line{ 
+        position:absolute;
+        height: 100vh;
+        width: 10px;
+        background-color: white;
+        margin-left: 95px;
+    }
+</style>
+
+<body>
+    <div class="score"></div>
+    <div class="game">
+        <div class="startScreen">Welcome message</div>
+        <div class="gameArea hide"></div>
+    </div>
+
+    <script>
+        const score = document.querySelector(".score")
+        const startScreen = document.querySelector(".startScreen")
+        const gameArea = document.querySelector(".gameArea")
+
+        let keys = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false
+
+        }
+        let player = {}
+        let speed = 5
+        startScreen.addEventListener("click", start)
+        document.addEventListener("keydown", pressOn)
+        document.addEventListener("keyup", pressOff)
+
+        function playGame() {
+            console.log("inplay");
+            let car = document.querySelector(".car")
+            let road = gameArea.getBoundingClientRect()
+            console.log(road);
+            if (player.start) {
+                if (keys.ArrowUp && player.y > road.top ) { player.y -= speed }
+                if (keys.ArrowDown && player.y < road.bottom) { player.y += speed }
+                if (keys.ArrowLeft && player.x > 0) { player.x -= speed }
+                if (keys.ArrowRight && player.x < (road.width -50)) { player.x += speed }
+                car.style.left = player.x + 'px'
+                car.style.top = player.y + 'px'
+                window.requestAnimationFrame(playGame)
+            }
+        }
+        function pressOn(e) {
+            e.preventDefault()
+            keys[e.key] = true
+            console.log("on", keys);
+        }
+        function pressOff(e) {
+            e.preventDefault()
+            keys[e.key] = false
+            console.log("off", keys);
+        }
+        function start() {
+            startScreen.classList.add("hide")
+            gameArea.classList.remove("hide")
+            player.start = true
+            for (let x = 0; x < 5; x++) {
+                let div = document.createElement("div")
+                div.classList.add("line")   
+                div.style.top = (x*150)+ "px"     
+                gameArea.appendChild(div)     
+            }
+            window.requestAnimationFrame(playGame)
+            let car = document.createElement("div")
+            car.innerText = "Car"
+            car.setAttribute("class", "car")
+            gameArea.appendChild(car)
+            player.x = car.offsetLeft
+            player.y = car.offsetTop
+        }
+
+    </script>
+
+</body>
+
+</html>
